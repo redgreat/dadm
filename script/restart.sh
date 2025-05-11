@@ -1,0 +1,1 @@
+cd /Users/wangcw/Documents/github/dadm && flutter clean && flutter pub get && flutter run -d chrome --web-port=3000
