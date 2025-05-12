@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/dashboard/presentation/pages/dashboard_page.dart';
 
 class AppRoutes {
-  static const String home = '/';
+  static const String dashboard = '/';
   static const String login = '/login';
   
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case home:
+      case dashboard:
         return MaterialPageRoute(
-          builder: (_) => const HomePage(),
+          builder: (_) => const DashboardPage(),
         );
       case login:
         return MaterialPageRoute(

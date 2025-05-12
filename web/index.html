@@ -1,100 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-  <!-- CORS headers -->
-  <meta http-equiv="Access-Control-Allow-Origin" content="*">
-  <meta http-equiv="Access-Control-Allow-Methods" content="GET,POST,OPTIONS,DELETE,PUT">
-  <meta http-equiv="Access-Control-Allow-Headers" content="Origin, X-Requested-With, Content-Type, Accept">
+  <meta name="description" content="EADM App">
 
   <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dadm">
+  <meta name="apple-mobile-web-app-title" content="EADM">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>dadm</title>
+  <title>EADM App</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <!-- 添加调试信息区域 -->
-  <div id="loading" style="display:flex;justify-content:center;align-items:center;height:100vh;flex-direction:column;">
-    <p>正在加载应用...</p>
-    <p id="debug-info" style="color:gray;font-size:12px;"></p>
-  </div>
-
-  <!-- 添加CORS调试支持 -->
+  <script src="flutter.js"></script>
   <script>
-    window.addEventListener('error', function(e) {
-      console.error('加载错误:', e);
-      document.getElementById('debug-info').innerHTML += '<br>错误: ' + e.message;
-    });
-    
-    // 添加全局CORS处理
-    (function() {
-      // 修补fetch方法以处理CORS
-      const originalFetch = window.fetch;
-      window.fetch = function(url, options) {
-        options = options || {};
-        // 确保所有请求都使用CORS模式
-        if (url.includes('127.0.0.1:8080') || url.includes('localhost:8080')) {
-          options.mode = 'cors';
-          options.credentials = 'include';
-          // 添加必要的CORS头部
-          options.headers = options.headers || {};
-          options.headers['Access-Control-Request-Method'] = 'GET, POST, OPTIONS';
-          options.headers['Access-Control-Request-Headers'] = 'Content-Type, Authorization';
-        }
-        return originalFetch(url, options);
-      };
-      
-      // 添加全局错误处理器，捕获并修复类型错误
-      window.addEventListener('unhandledrejection', function(event) {
-        if (event.reason && event.reason.message && event.reason.message.includes("type 'JSNull' is not a subtype of type 'String'")) {
-          console.warn('捕获到类型错误，尝试修复...');
-          event.preventDefault();
-        }
+    window.addEventListener('load', async function() {
+      // 下载并初始化 Flutter
+      _flutter = await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'main.dart.js';
+        script.type = 'application/javascript';
+        document.body.append(script);
+        window.init = resolve;
+        setTimeout(() => reject(new Error("Flutter initialization timeout")), 10000);
       });
-    })();
-    
-    // 检测API连接
-    function checkApiConnection() {
-      fetch('http://127.0.0.1:8080', {mode: 'cors'})
-        .then(response => {
-          document.getElementById('debug-info').innerHTML += '<br>API连接成功';
-        })
-        .catch(error => {
-          document.getElementById('debug-info').innerHTML += '<br>API连接失败: ' + error.message;
-        });
-    }
-    
-    // 页面加载完成后检查API
-    window.addEventListener('load', function() {
-      setTimeout(checkApiConnection, 1000);
+
+      // 设置必要的构建配置
+      _flutter.loader.beforeBuildConfig = Promise.resolve();
+      _flutter.loader.buildConfig = Promise.resolve({
+        appScriptUrl: "main.dart.js",
+        assetBase: "/",
+        canvasKitBaseUrl: "/canvaskit/",
+      });
+
+      try {
+        // 初始化 Flutter 引擎
+        const appRunner = await _flutter.loader.load();
+        await appRunner.initializeEngine();
+        await appRunner.runApp();
+      } catch (error) {
+        console.error('Flutter initialization error:', error);
+      }
     });
-  
   </script>
-  
-  <script src="flutter_bootstrap.js"></script>
 </body>
 </html>

@@ -34,11 +34,8 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) {
           return Scaffold(
             body: BlocConsumer<AuthBloc, AuthState>(
-              listener: (context, state) {
-                if (state is AuthAuthenticated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
-                  );
+              listener: (context, state) {                if (state is AuthAuthenticated) {
+                  // 直接跳转到仪表盘页面，提示消息会在仪表盘页面显示
                   Navigator.pushReplacementNamed(context, '/');
                 } else if (state is AuthError) {
                   ScaffoldMessenger.of(context).showSnackBar(

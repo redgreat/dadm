@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
-import '../../../../core/config/app_config.dart';
 import '../models/login_model.dart';
 
 class AuthRepository {
@@ -12,14 +11,14 @@ class AuthRepository {
     try {
       // 创建登录请求
       final request = LoginRequest(loginName: loginName, password: password);
+        // 转换为表单格式
+      final formData = {
+        'loginName': loginName,
+        'password': password,
+      };
       
-      // 使用ApiClient发送请求，注意ApiClient的post方法不支持options参数
-      final response = await _apiClient.post(
-        '/login',
-        data: request.toJson(),
-      );
-      
-      // ApiClient已经在内部配置了必要的头部和验证
+      // 发送登录请求
+      final response = await _apiClient.post('/login', data: formData);
       
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
