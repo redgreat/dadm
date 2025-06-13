@@ -9,6 +9,7 @@
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="EADM">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -20,35 +21,38 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <script src="flutter.js"></script>
   <script>
-    window.addEventListener('load', async function() {
-      // 下载并初始化 Flutter
-      _flutter = await new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = 'main.dart.js';
-        script.type = 'application/javascript';
-        document.body.append(script);
-        window.init = resolve;
-        setTimeout(() => reject(new Error("Flutter initialization timeout")), 10000);
-      });
+    // 添加调试信息显示区域
+    const loadingDiv = document.createElement('div');
+    loadingDiv.id = 'loading';
+    loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-family:Arial,sans-serif;';
+    loadingDiv.innerHTML = '<p>正在加载应用...</p><p id="debug-info" style="color:gray;font-size:12px;"></p>';
+    document.body.appendChild(loadingDiv);
 
-      // 设置必要的构建配置
-      _flutter.loader.beforeBuildConfig = Promise.resolve();
-      _flutter.loader.buildConfig = Promise.resolve({
-        appScriptUrl: "main.dart.js",
-        assetBase: "/",
-        canvasKitBaseUrl: "/canvaskit/",
-      });
-
-      try {
-        // 初始化 Flutter 引擎
-        const appRunner = await _flutter.loader.load();
-        await appRunner.initializeEngine();
-        await appRunner.runApp();
-      } catch (error) {
-        console.error('Flutter initialization error:', error);
+    // 简化的Flutter初始化
+    window.addEventListener('load', function(ev) {
+      // 移除加载提示
+      setTimeout(() => {
+        const loading = document.getElementById('loading');
+        if (loading) loading.remove();
+      }, 3000);
+      
+      // 下载main.dart.js
+      var serviceWorkerVersion = null;
+      var scriptLoaded = false;
+      function loadMainDartJs() {
+        if (scriptLoaded) {
+          return;
+        }
+        scriptLoaded = true;
+        var scriptTag = document.createElement('script');
+        scriptTag.src = 'main.dart.js';
+        scriptTag.type = 'application/javascript';
+        document.body.append(scriptTag);
       }
+
+      // 立即加载
+      loadMainDartJs();
     });
   </script>
 </body>

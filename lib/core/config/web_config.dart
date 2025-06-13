@@ -5,17 +5,15 @@ import 'dart:js' as js;
 class WebConfig {
   static void initializeApp() {
     if (kIsWeb) {
-      // Web specific initializations
-      WidgetsFlutterBinding.ensureInitialized();
+      // 简化Web初始化，避免复杂的异步操作
+      debugPrint('配置Web环境设置...');
       
-      // 配置Web环境下的CORS和网络设置
-      _configureWebSettings();
-      
-      // 添加全局错误处理
-      _setupErrorHandling();
-      
-      // 输出调试信息
-      debugPrint('Flutter Web应用初始化完成');
+      // 延迟执行非关键初始化
+      Future.delayed(Duration(milliseconds: 100), () {
+        _configureWebSettings();
+        _setupErrorHandling();
+        debugPrint('Flutter Web应用初始化完成');
+      });
     }
   }
     // Web环境特定配置

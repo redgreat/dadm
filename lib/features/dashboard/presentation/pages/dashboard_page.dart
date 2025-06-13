@@ -30,15 +30,23 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     // TODO: 获取仪表盘数据
-    // 登录成功后显示提示
+    
+    // 登录成功后显示提示，只有当从登录页面跳转过来时才显示
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('登录成功'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      // 获取路由参数
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final showLoginSuccess = args?['showLoginSuccess'] == true;
+      
+      // 只有当showLoginSuccess为true时才显示登录成功提示
+      if (showLoginSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('登录成功'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
     });
   }
 

@@ -10,9 +10,12 @@ import 'features/auth/presentation/bloc/auth_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 简化Web初始化，避免复杂的异步操作
   if (kIsWeb) {
-    WebConfig.initializeApp();
+    print('Flutter Web应用启动中...');
   }
+  
   runApp(const MyApp());
 }
 

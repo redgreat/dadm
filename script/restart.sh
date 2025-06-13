@@ -1,10 +1,12 @@
 # 清理并获取依赖
+#!/bin/bash
+
+# 清理并获取依赖
 flutter clean
 flutter pub get
 
-# 构建 web 应用
+# 确保Web支持已启用
 flutter config --enable-web
-flutter build web --release
 
-# 运行开发服务器
-flutter run -d chrome --web-port=3000 --dart-define=FLUTTER_WEB_USE_SKIA=true
+# 直接运行开发服务器（不构建release版本）
+flutter run -d chrome --web-port=3000

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import '../config/app_config.dart';
 
 class ApiClient {
@@ -8,15 +9,26 @@ class ApiClient {
   factory ApiClient() {
     return _instance;
   }
-  ApiClient._internal() {    dio = Dio(BaseOptions(      baseUrl: AppConfig.baseUrl,
+  ApiClient._internal() {
+    dio = Dio(BaseOptions(
+      baseUrl: AppConfig.baseUrl,
       connectTimeout: Duration(milliseconds: AppConfig.connectTimeout),
       receiveTimeout: Duration(milliseconds: AppConfig.receiveTimeout),
       contentType: Headers.formUrlEncodedContentType,
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'Origin': 'http://localhost:3000',
-        'Access-Control-Allow-Credentials': 'true',
-      },    ));
+        'Accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    ));
+    
+    // 设置withCredentials以支持cookie会话
+    if (dio.httpClientAdapter is IOHttpClientAdapter) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate = (client) {
+        client.badCertificateCallback = (cert, host, port) => true;
+        return client;
+      };
+    }
 
     // 正确设置 withCredentials
     dio.options.validateStatus = (status) => status! < 500;

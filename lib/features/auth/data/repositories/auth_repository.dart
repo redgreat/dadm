@@ -20,7 +20,10 @@ class AuthRepository {
       // 发送登录请求
       final response = await _apiClient.post('/login', data: formData);
       
-      return LoginResponse.fromJson(response.data);
+      // 后端返回的是数组格式，取第一个元素
+      final responseData = response.data is List ? response.data[0] : response.data;
+      
+      return LoginResponse.fromJson(responseData);
     } on DioException catch (e) {
       throw Exception(e.response?.data?['message'] ?? e.message ?? '登录失败');
     }
